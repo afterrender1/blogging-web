@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import AllPosts from "./AllPosts";
 
 const Home = () => {
   return (
     <div>
-      home
+      <AllPosts />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

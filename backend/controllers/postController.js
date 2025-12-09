@@ -17,3 +17,28 @@ export const createPost = async (req, res) => {
     res.status(500).json({ error: "Failed to create post" });
   }
 };
+
+
+export const showPosts = async (req , res)=> {
+    try {
+        const allPosts = await  Post.find();
+        if(!allPosts) return res.status(404).json({success : false , message : "there is no any posts "})
+
+res.json({
+    success : true,
+    posts : allPosts
+})
+
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            message : "server error"
+        })
+        
+    }
+
+
+
+}
