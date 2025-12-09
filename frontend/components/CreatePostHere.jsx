@@ -11,37 +11,45 @@ const CreatePostHere = () => {
     const [loading, setLoading] = useState(false);
 
     // Submission Handler (for logging data)
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-        if (!title || !intro || !content || !imageFile) {
-            alert("All fields are required to submit the post.");
-            setLoading(false);
-            return;
-        }
+  if (!title || !intro || !content || !imageFile) {
+    alert("All fields are required.");
+    setLoading(false);
+    return;
+  }
 
-        // --- LOGGING DATA (Developer Requirement) ---
-        console.log("--- New Post Data Log (Console.log Life) ---");
-        console.log("Title:", title);
-        console.log("Intro (Short Description):", intro);
-        console.log("Content Length:", content.length, "characters");
-        console.log("Image File Name:", imageFile.name);
-        console.log("Image File Type:", imageFile.type);
-        console.log("Image File Size:", (imageFile.size / 1024).toFixed(2), "KB");
-        console.log("-------------------------------------------");
-        
-        // Simulate API call delay
-        setTimeout(() => {
-            alert("Form data logged! Ready for Firebase integration.");
-            setLoading(false);
-            // Reset form
-            setTitle('');
-            setIntro('');
-            setContent('');
-            setImageFile(null);
-        }, 1500);
-    };
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("intro", intro);
+  formData.append("content", content);
+  formData.append("image", imageFile); // matches `upload.single("image")`
+
+  try {
+    const res = await fetch("http://localhost:8000/api/posts", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to create post");
+
+    alert("Post created successfully!");
+    setTitle("");
+    setIntro("");
+    setContent("");
+    setImageFile(null);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     return (
         // Brightened background, minimal padding on edges
