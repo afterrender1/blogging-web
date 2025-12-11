@@ -81,7 +81,7 @@ export default function AllPosts() {
     <>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Header */}
-        <header className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 py-24 md:py-32">
+        <header className="relative overflow-hidden bg-linear-to-br from-blue-600 via-purple-600 to-pink-600 py-24 md:py-32">
           <div className="absolute inset-0 bg-black opacity-30"></div>
           <div className="relative container mx-auto px-6 text-center text-white">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
@@ -114,7 +114,7 @@ export default function AllPosts() {
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
 
                 {/* Content */}
