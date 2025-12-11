@@ -1,14 +1,32 @@
 "use client";
 
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  Calendar,
+  ChevronRight, // Changed from ArrowRight for a classic look
+  User,
+  BookOpen,
+  Tag,
+  Loader2, // For a cleaner loading spinner
+  XCircle, // For a cleaner error icon
+} from "lucide-react";
 
+// The constants are updated to reflect the new "classic" palette
 const BASE_URL = "http://localhost:8000";
+
+// --- New Classic Palette ---
+// WARM_CREAM for background (Paper/Parchment feel)
+const WARM_CREAM = "#fcf9f3";
+// DEEP_CHARCOAL for text (Ink feel)
+const DEEP_CHARCOAL = "#2d2a2a";
+// VINTAGE_ACCENT for subtle links/details (e.g., a deep gold/sepia)
+const VINTAGE_ACCENT = "#996a3f";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
-    month: "short",
+    month: "long", // Long month name for a classic look
     day: "numeric",
     year: "numeric",
   });
@@ -22,7 +40,9 @@ export default function AllPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        // Simulating the fetching for the example
         const res = await fetch(`${BASE_URL}/api/posts/all-posts`);
+
         if (!res.ok) throw new Error("Failed to fetch posts");
 
         const data = await res.json();
@@ -37,125 +57,159 @@ export default function AllPosts() {
     fetchPosts();
   }, []);
 
+  /* ================== LOADING STATE ================== */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 font-medium">Loading stories...</p>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-5 bg-white">
+        {/* Classic, thin spinner */}
+        <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+        <p className="text-gray-600 text-lg tracking-wider font-serif">
+          Consulting the archives...
+        </p>
       </div>
     );
   }
 
+  /* ================== ERROR STATE ================== */
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 shadow-lg">
-            <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-              <span className="text-3xl">Warning</span>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h3>
-            <p className="text-gray-600">{error}</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+        <div className="max-w-xl text-center border-2 border-red-300 p-10 shadow-lg bg-red-50">
+          <XCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+          <h3 className={`text-2xl font-serif font-bold text-red-900`}>
+            System Interrupted
+          </h3>
+          <p className="mt-4 text-gray-700 font-sans">{error}</p>
+          <p className="mt-2 text-sm text-red-500">
+            Check the connection to $${BASE_URL}$$
+          </p>
         </div>
       </div>
     );
-  
   }
 
+  /* ================== EMPTY STATE ================== */
   if (posts.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="text-center">
-          <div className="bg-gray-100 border-2 border-dashed rounded-xl w-24 h-24 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">No posts yet</h2>
-          <p className="text-gray-500">Be the first to publish something amazing!</p>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+        <div className="text-center p-12 border-2 border-gray-200 rounded-lg">
+          <BookOpen
+            className="w-16 h-16 text-gray-400 mx-auto mb-6"
+            strokeWidth={1.5}
+          />
+          <h2 className={`text-3xl font-serif font-bold ${DEEP_CHARCOAL}`}>
+            The Pages Are Blank
+          </h2>
+          <p className="text-gray-600 mt-3 font-sans">
+            No published articles were found in the repository.
+          </p>
         </div>
       </div>
     );
   }
 
+  /* ================== MAIN UI ================== */
   return (
-    <>
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Header */}
-   
-
-        {/* Posts Grid */}
-        <section className="container mx-auto px-6 py-16 md:py-20 -mt-10 relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {posts.map((post, index) => (
-              <article
-                key={post._id}
-                className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Image Container */}
-                <div className="relative h-64 overflow-hidden bg-gray-100">
-                  <Image
-                    src={
-                      post.imageUrl
-                        ? `${BASE_URL}${post.imageUrl}`
-                        : "/placeholder.jpg"
-                    }
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-
-                {/* Content */}
-                <div className="p-7">
-                  <time className="text-sm font-medium text-blue-600 uppercase tracking-wider">
-                    {formatDate(post.createdAt)}
-                  </time>
-
-                  <h2 className="mt-3 text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {post.title}
-                  </h2>
-
-                  <p className="mt-3 text-gray-600 line-clamp-3 text-sm leading-relaxed">
-                    {post.intro || "Dive into this story and explore new ideas..."}
-                  </p>
-
-                  {/* Read More */}
-                  <div className="mt-6 flex items-center text-blue-600 font-semibold text-sm group-hover:text-blue-700">
-                    <span>Read more</span>
-                    <svg
-                      className="w-5 h-5 ml-2 transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Subtle hover border glow */}
-                <div className="absolute inset-0 rounded-3xl ring-4 ring-transparent group-hover:ring-blue-400/30 transition-all duration-500 pointer-events-none" />
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 py-12 mt-20">
-          <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
-            © {new Date().getFullYear()} Your Blog Name. Crafted with
-            <span className="text-red-500 mx-1">♥</span>
-            and Next.js
-          </div>
-        </footer>
+    <div className={`min-h-screen pt-28 pb-20`} style={{ backgroundColor: WARM_CREAM }}>
+      {/* Header title */}
+      <div className="text-center mb-16 px-6">
+        <h1
+          className={`text-6xl sm:text-7xl font-serif font-light tracking-tight`}
+          style={{ color: DEEP_CHARCOAL }}
+        >
+          The Journal
+        </h1>
+        <p
+          className="mt-5 text-lg max-w-3xl mx-auto font-serif"
+          style={{ color: DEEP_CHARCOAL }}
+        >
+          <BookOpen className="inline-block mr-2 w-5 h-5 align-middle" />
+          A collection of latest musings, reports, and insights.
+        </p>
+        <hr className="mt-8 max-w-lg mx-auto border-t border-gray-300" />
       </div>
-    </>
+
+      {/* Posts Grid */}
+      <section className="container mx-auto px-5 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+          {posts.map((post, index) => (
+            <article
+              key={post._id}
+              className={`group bg-white rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border border-gray-200`}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              {/* IMAGE */}
+              <div className="relative h-56 bg-gray-100 overflow-hidden border-b border-gray-200">
+                <Image
+                  src={
+                    post.imageUrl
+                      ? `${BASE_URL}${post.imageUrl}`
+                      : "/placeholder-classic.jpg" // Using a classic placeholder
+                  }
+                  alt={post.title}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                />
+
+                {/* Optional floating tag for category, moved to bottom-left */}
+                <span
+                  className="absolute bottom-3 left-4 px-3 py-1 text-xs tracking-wider font-semibold rounded-sm shadow-md"
+                  style={{
+                    backgroundColor: VINTAGE_ACCENT,
+                    color: WARM_CREAM,
+                  }}
+                >
+                  {post.category || "Reflections"}
+                </span>
+              </div>
+
+              {/* CONTENT */}
+              <div className="p-6">
+                {/* META INFO (Author/Date) */}
+                <div className="flex items-center justify-between text-xs text-gray-500 font-sans border-b border-gray-100 pb-3 mb-4">
+                  <span className="flex items-center gap-1">
+                    <Calendar size={14} className="text-gray-400" />
+                    {formatDate(post.createdAt)}
+                  </span>
+                  {/* Assuming post.author exists, if not, remove or use a default */}
+                  <span className="flex items-center gap-1">
+                    <User size={14} className="text-gray-400" />
+                    {post.author || "The Editor"}
+                  </span>
+                </div>
+
+                {/* TITLE */}
+                <h2
+                  className={`text-2xl font-serif font-bold leading-snug line-clamp-2 transition-colors`}
+                  style={{ color: DEEP_CHARCOAL }}
+                >
+                  {post.title}
+                </h2>
+
+                {/* INTRO / DESCRIPTION */}
+                <p className="mt-4 text-gray-600 line-clamp-3 text-base leading-relaxed font-serif">
+                  {post.intro || "An in-depth report from the archives..."}
+                </p>
+
+                {/* READ MORE (Classic button style) */}
+                <button
+                  className={`mt-6 inline-flex items-center text-sm font-semibold tracking-wider uppercase transition`}
+                  style={{ color: VINTAGE_ACCENT }}
+                >
+                  <span className="border-b cursor-pointer border-dashed border-current pb-0.5">
+                    Continue Reading
+                  </span>
+                  <ChevronRight
+                    size={16}
+                    className="ml-2 transform group-hover:translate-x-1 transition duration-300"
+                  />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
