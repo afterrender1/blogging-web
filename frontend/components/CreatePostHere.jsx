@@ -136,11 +136,10 @@ const CreatePostHere = () => {
               <label
                 htmlFor="image-upload"
                 className={`cursor-pointer flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg transition p-4
-                                            ${
-                                              imageFile
-                                                ? "border-green-500 bg-green-50"
-                                                : "border-gray-400 hover:bg-gray-50"
-                                            }`} // Subtle hover on flat design
+                                            ${imageFile
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-400 hover:bg-gray-50"
+                  }`} // Subtle hover on flat design
               >
                 <svg
                   className="w-9 h-9 text-gray-500"
@@ -157,9 +156,8 @@ const CreatePostHere = () => {
                   ></path>
                 </svg>
                 <p
-                  className={`mt-2 text-sm font-medium ${
-                    imageFile ? "text-green-700" : "text-gray-600"
-                  }`}
+                  className={`mt-2 text-sm font-medium ${imageFile ? "text-green-700" : "text-gray-600"
+                    }`}
                 >
                   {imageFile
                     ? `File Selected: ${imageFile.name}`
@@ -182,11 +180,10 @@ const CreatePostHere = () => {
             type="submit"
             disabled={loading}
             className={`w-full py-4 rounded-xl text-xl font-bold text-white transition duration-300 
-                                    ${
-                                      loading
-                                        ? "bg-indigo-300 cursor-not-allowed"
-                                        : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800"
-                                    }`}
+                                    ${loading
+                ? "bg-indigo-300 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800"
+              }`}
           >
             {loading ? "Processing Data..." : "Publish & Log Data"}
           </button>

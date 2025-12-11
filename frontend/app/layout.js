@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Poppins, Montserrat } from 'next/font/google';
 
-const poppins = Poppins({ 
+const poppins = Poppins({
   subsets: ['latin'],
   weight: ['800'], // Define the weights you need
   variable: '--font-poppins',
@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning ={true}>
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={`${poppins.className} ${montserrat.className} antialiased `}
       >

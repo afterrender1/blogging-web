@@ -175,7 +175,7 @@ export default function AboutPage() {
                 </section>
 
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }

@@ -88,13 +88,13 @@ export default function AllPosts() {
   const [error, setError] = useState(null);
   const [navigatingToLatest, setNavigatingToLatest] = useState(false);
   const [latestPostSuccess, setLatestPostSuccess] = useState(false);
-const router = useRouter();
+  const router = useRouter();
 
-const handlePostClick = (id) => {
-console.log(id);
-router.push(`/post/${id}`);
-// (`/post/${id}`);
-}
+  const handlePostClick = (id) => {
+    console.log(id);
+    router.push(`/post/${id}`);
+    // (`/post/${id}`);
+  }
 
 
 
@@ -267,10 +267,10 @@ router.push(`/post/${id}`);
           onClick={handleLatestPostClick}
           disabled={navigatingToLatest || latestPostSuccess}
           className={`cursor-pointer mt-6 inline-flex items-center justify-center px-6 py-2 border-2 text-sm font-semibold tracking-wider uppercase transition duration-300 ${latestPostSuccess
-              ? "bg-[#119188] border-[#119188] text-white cursor-default"
-              : navigatingToLatest
-                ? "bg-[#119188]/50 border-[#119188] text-white/80 cursor-not-allowed"
-                : "bg-[#119188] border-[#119188] text-white hover:bg-[#0f7a73]"
+            ? "bg-[#119188] border-[#119188] text-white cursor-default"
+            : navigatingToLatest
+              ? "bg-[#119188]/50 border-[#119188] text-white/80 cursor-not-allowed"
+              : "bg-[#119188] border-[#119188] text-white hover:bg-[#0f7a73]"
             }`}
           whileTap={{ scale: 0.98 }}
         >
@@ -360,10 +360,10 @@ router.push(`/post/${id}`);
 
                   {/* READ MORE (Classic button style) */}
                   <button
-                  onClick={() => handlePostClick(post._id)  }
+                    onClick={() => handlePostClick(post._id)}
                     className={`mt-6 inline-flex items-center text-sm font-semibold tracking-wider uppercase transition`}
                   >
-                    <span  className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
+                    <span className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
                       Continue Reading
                     </span>
                     <ChevronRight

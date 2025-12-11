@@ -17,18 +17,18 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row justify-between gap-8">
                 {/* Logo / Branding */}
                 <div className="flex flex-col gap-4">
-                            <div className="shrink-0">
-            <Link href="/">
-              <Image
-                src="/logo/brand-logo.png"
-                alt="Daily World Blog"
-                width={170}
-                height={90}
-                className="h-10 w-auto rounded object-contain"
-                priority
-              />
-            </Link>
-          </div>
+                    <div className="shrink-0">
+                        <Link href="/">
+                            <Image
+                                src="/logo/brand-logo.png"
+                                alt="Daily World Blog"
+                                width={170}
+                                height={90}
+                                className="h-10 w-auto rounded object-contain"
+                                priority
+                            />
+                        </Link>
+                    </div>
                     <p className="max-w-xs text-gray-300">
                         Your daily dose of global news, stories, and insights. Stay informed,
                         stay inspired.
