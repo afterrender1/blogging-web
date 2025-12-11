@@ -4,8 +4,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Hero() {
-  const PRIMARY_DARK = "#0a3d3a";
-  const ACCENT_TEAL = "#37e7a0";
+
 
   return (
     <section className="relative bg-[#0a3d3a] text-white overflow-hidden">

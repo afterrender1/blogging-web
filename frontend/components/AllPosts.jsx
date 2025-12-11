@@ -114,13 +114,13 @@ export default function AllPosts() {
       {/* Header title */}
       <div className="text-center mb-16 px-6">
         <h1
-          className={`text-6xl sm:text-7xl font-serif font-light tracking-tight`}
+          className={`text-6xl sm:text-7xl  font-light tracking-tight`}
           style={{ color: DEEP_CHARCOAL }}
         >
           The Journal
         </h1>
         <p
-          className="mt-5 text-lg max-w-3xl mx-auto font-serif"
+          className="mt-5 text-lg max-w-3xl mx-auto "
           style={{ color: DEEP_CHARCOAL }}
         >
           <BookOpen className="inline-block mr-2 w-5 h-5 align-middle" />
@@ -195,14 +195,14 @@ export default function AllPosts() {
                 {/* READ MORE (Classic button style) */}
                 <button
                   className={`mt-6 inline-flex items-center text-sm font-semibold tracking-wider uppercase transition`}
-                  style={{ color: VINTAGE_ACCENT }}
+                 
                 >
-                  <span className="border-b cursor-pointer border-dashed border-current pb-0.5">
+                  <span className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
                     Continue Reading
                   </span>
                   <ChevronRight
                     size={16}
-                    className="ml-2 transform group-hover:translate-x-1 transition duration-300"
+                    className="text-[#119188] ml-2 transform group-hover:translate-x-1 transition duration-300"
                   />
                 </button>
               </div>
