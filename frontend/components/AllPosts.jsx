@@ -12,12 +12,15 @@ import {
   XCircle,
   CheckCircle,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // --- New Classic Palette ---
 const BASE_URL = "http://localhost:8000";
 const WARM_CREAM = "#fcf9f3";
 const DEEP_CHARCOAL = "#2d2a2a";
 const VINTAGE_ACCENT = "#996a3f";
+
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -27,6 +30,7 @@ const formatDate = (dateString) => {
     year: "numeric",
   });
 };
+
 
 /* ================== SHARED LOADER (Framer Motion Spinner) ================== */
 const Spinner = ({ size, color }) => (
@@ -84,6 +88,15 @@ export default function AllPosts() {
   const [error, setError] = useState(null);
   const [navigatingToLatest, setNavigatingToLatest] = useState(false);
   const [latestPostSuccess, setLatestPostSuccess] = useState(false);
+const router = useRouter();
+
+const handlePostClick = (id) => {
+console.log(id);
+router.push(`/post/${id}`);
+// (`/post/${id}`);
+}
+
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -346,18 +359,18 @@ export default function AllPosts() {
                   </p>
 
                   {/* READ MORE (Classic button style) */}
-                  <a
-                    href={`/posts/${post.slug}`}
+                  <button
+                  onClick={() => handlePostClick(post._id)  }
                     className={`mt-6 inline-flex items-center text-sm font-semibold tracking-wider uppercase transition`}
                   >
-                    <span className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
+                    <span  className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
                       Continue Reading
                     </span>
                     <ChevronRight
                       size={16}
                       className="text-[#119188] ml-2 transform group-hover:translate-x-1 transition duration-300"
                     />
-                  </a>
+                  </button>
                 </div>
               </motion.article>
             ))}
