@@ -37,7 +37,7 @@ export const getPostById = async (req, res) => {
     if (!id) return res.status(400).json({ message: "id is required" })
     const singlePost = await Post.findById(id)
     if (!singlePost) return res.send(404).json({ message: "Blog post not found!" })
-    res.json({
+    res.status(200).json({
       success: true,
       post: singlePost,
     })
