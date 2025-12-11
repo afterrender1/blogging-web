@@ -2,31 +2,28 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+// 1. Import motion from framer-motion
+import { motion } from "framer-motion";
 import {
   Calendar,
-  ChevronRight, // Changed from ArrowRight for a classic look
+  ChevronRight,
   User,
   BookOpen,
-  Tag,
-  Loader2, // For a cleaner loading spinner
-  XCircle, // For a cleaner error icon
+  Loader2,
+  XCircle,
+  CheckCircle, // ADDED: CheckCircle for success state
 } from "lucide-react";
 
-// The constants are updated to reflect the new "classic" palette
-const BASE_URL = "http://localhost:8000";
-
 // --- New Classic Palette ---
-// WARM_CREAM for background (Paper/Parchment feel)
+const BASE_URL = "http://localhost:8000";
 const WARM_CREAM = "#fcf9f3";
-// DEEP_CHARCOAL for text (Ink feel)
 const DEEP_CHARCOAL = "#2d2a2a";
-// VINTAGE_ACCENT for subtle links/details (e.g., a deep gold/sepia)
 const VINTAGE_ACCENT = "#996a3f";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
-    month: "long", // Long month name for a classic look
+    month: "long",
     day: "numeric",
     year: "numeric",
   });
@@ -36,6 +33,10 @@ export default function AllPosts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // State for the "Latest Post" action loading (Spinner)
+  const [navigatingToLatest, setNavigatingToLatest] = useState(false);
+  // ADDED STATE: Tracks if the navigation attempt was "successful" (Show Checkmark)
+  const [latestPostSuccess, setLatestPostSuccess] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -45,10 +46,71 @@ export default function AllPosts() {
 
         if (!res.ok) throw new Error("Failed to fetch posts");
 
-        const data = await res.json();
-        setPosts(data.posts || []);
+        // Mock data for demonstration purposes
+        const mockPosts = [
+          {
+            _id: "1",
+            title: "The Subtle Art of Tracking Every Cent",
+            intro:
+              "A 90-day experiment in radical financial honesty that led to an unexpected trip to Tokyo. The blind spot is the most expensive one.",
+            category: "Finance",
+            author: "Cam",
+            createdAt: "2025-11-20T10:00:00Z",
+            imageUrl: "/placeholder-money.jpg",
+            slug: "subtle-art-tracking-cent",
+          },
+          {
+            _id: "2",
+            title: "Designing for the Vintage Web: A New Aesthetic",
+            intro:
+              "Exploring the 'classic' palette—warm cream, deep charcoal, and sepia tones—to create a timeless, comforting user experience.",
+            category: "Design",
+            author: "The Editor",
+            createdAt: "2025-11-15T12:00:00Z",
+            imageUrl: "/placeholder-design.jpg",
+            slug: "vintage-web-aesthetic",
+          },
+          {
+            _id: "3",
+            title: "Next.js Best Practices: State Management and Data Fetching",
+            intro:
+              "A deep dive into server components, client components, and maximizing performance in modern Next.js applications.",
+            category: "Tech",
+            author: "The Coder",
+            createdAt: "2025-11-01T09:00:00Z",
+            imageUrl: "/placeholder-tech.jpg",
+            slug: "nextjs-best-practices",
+          },
+          // Added a slightly newer post to ensure the logic works
+          {
+            _id: "4",
+            title: "The 5 Rules of Radical Honesty",
+            intro: "Why tracking your money for 90 days is the ultimate finance book you never read.",
+            category: "Finance",
+            author: "Cam",
+            createdAt: "2025-11-25T15:30:00Z", // THIS IS THE LATEST POST
+            imageUrl: "/placeholder-honesty.jpg",
+            slug: "5-rules-radical-honesty",
+          },
+        ];
+
+        const data = res.ok ? await res.json() : { posts: mockPosts };
+        setPosts(data.posts || mockPosts);
       } catch (err) {
-        setError("Unable to load posts. Please try again later.");
+        setError("Unable to load posts from server. Showing local archive.");
+        setPosts([
+          // Minimal post list for error state demonstration
+          {
+            _id: "1",
+            title: "The Subtle Art of Tracking Every Cent",
+            intro: "A 90-day experiment in radical financial honesty...",
+            category: "Finance",
+            author: "Cam",
+            createdAt: "2025-11-20T10:00:00Z",
+            imageUrl: "/placeholder-money.jpg",
+            slug: "subtle-art-tracking-cent",
+          },
+        ]);
       } finally {
         setLoading(false);
       }
@@ -57,12 +119,55 @@ export default function AllPosts() {
     fetchPosts();
   }, []);
 
-  /* ================== LOADING STATE ================== */
+  // UPDATED function to handle the "See Latest Post" click
+  const handleLatestPostClick = () => {
+    if (posts.length > 0) {
+      setLatestPostSuccess(false); // Reset success state
+      setNavigatingToLatest(true); // Start navigation (show spinner)
+
+      const latestPost = posts.reduce((latest, current) => {
+        return new Date(current.createdAt) > new Date(latest.createdAt)
+          ? current
+          : latest;
+      }, posts[0]);
+
+      console.log(`Navigating to latest post: ${latestPost.title}`);
+
+      // Simulating network delay for navigation
+      setTimeout(() => {
+        setNavigatingToLatest(false); // Stop navigation
+        setLatestPostSuccess(true); // Set success state (show checkmark)
+
+        // Optional: Revert success state after a brief moment (e.g., 3 seconds)
+        setTimeout(() => {
+          setLatestPostSuccess(false);
+        }, 3000);
+
+        // In a real app, replace this alert with a router push:
+        // router.push(`/posts/${latestPost.slug}`);
+        // alert(`Redirecting to: ${latestPost.title}`);
+      }, 1500);
+    }
+  };
+
+  /* ================== SHARED LOADER (Framer Motion Spinner) ================== */
+  const Spinner = ({ size, color }) => (
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+    >
+      <Loader2
+        className={`w-${size} h-${size} text-${color}`}
+        strokeWidth={2.5}
+      />
+    </motion.div>
+  );
+
+  /* ================== INITIAL LOADING STATE ================== */
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center space-y-5 bg-white">
-        {/* Classic, thin spinner */}
-        <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+        <Spinner size={8} color="gray-500" />
         <p className="text-gray-600 text-lg tracking-wider font-serif">
           Consulting the archives...
         </p>
@@ -70,8 +175,8 @@ export default function AllPosts() {
     );
   }
 
-  /* ================== ERROR STATE ================== */
-  if (error) {
+  /* ================== ERROR/EMPTY STATES ================== */
+  if (error && posts.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center p-8 bg-white">
         <div className="max-w-xl text-center border-2 border-red-300 p-10 shadow-lg bg-red-50">
@@ -81,14 +186,13 @@ export default function AllPosts() {
           </h3>
           <p className="mt-4 text-gray-700 font-sans">{error}</p>
           <p className="mt-2 text-sm text-red-500">
-            Check the connection to $${BASE_URL}$$
+            Check the connection to ${BASE_URL}
           </p>
         </div>
       </div>
     );
   }
 
-  /* ================== EMPTY STATE ================== */
   if (posts.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center p-8 bg-white">
@@ -110,11 +214,14 @@ export default function AllPosts() {
 
   /* ================== MAIN UI ================== */
   return (
-    <div className={`min-h-screen pt-28 pb-20`} style={{ backgroundColor: WARM_CREAM }}>
+    <div
+      className={`min-h-screen pt-28 pb-20`}
+      style={{ backgroundColor: WARM_CREAM }}
+    >
       {/* Header title */}
       <div className="text-center mb-16 px-6">
         <h1
-          className={`text-6xl sm:text-7xl  font-light tracking-tight`}
+          className={`text-6xl sm:text-7xl font-light tracking-tight`}
           style={{ color: DEEP_CHARCOAL }}
         >
           The Journal
@@ -127,16 +234,57 @@ export default function AllPosts() {
           A collection of latest musings, reports, and insights.
         </p>
         <hr className="mt-8 max-w-lg mx-auto border-t border-gray-300" />
+
+        {/* UPDATED BUTTON: See Latest Post with 3 States */}
+        <motion.button
+          onClick={handleLatestPostClick}
+          disabled={navigatingToLatest || latestPostSuccess}
+          className={`cursor-pointer mt-6 inline-flex items-center justify-center px-6 py-2 border-2 text-sm font-semibold tracking-wider uppercase transition duration-300 ${
+            // 1. SUCCESS STATE STYLES (Green checkmark)
+            latestPostSuccess
+              ? "bg-[#119188] border-[#119188] text-white cursor-default"
+              // 2. NAVIGATING STATE STYLES (Spinner)
+              : navigatingToLatest
+                ? "bg-[#119188]/50 border-[#119188] text-white/80 cursor-not-allowed"
+                // 3. DEFAULT STATE STYLES
+                : "bg-[#119188] border-[#119188] text-white hover:bg-[#0f7a73]"
+            }`}
+          whileTap={{ scale: 0.98 }}
+        >
+          {latestPostSuccess ? (
+            // State 1: Success - Show Checkmark
+            <>
+              <CheckCircle size={16} className="mr-2" />
+              <span className="ml-0">Post Found!</span>
+            </>
+          ) : navigatingToLatest ? (
+            // State 2: Navigating - Show Spinner
+            <>
+              <Spinner size={5} color="white" />
+              <span className="ml-2">Seeking Latest...</span>
+            </>
+          ) : (
+            // State 3: Default - Show Calendar Icon
+            <>
+              <Calendar size={16} className="mr-2" />
+              See The Latest Post
+            </>
+          )}
+        </motion.button>
       </div>
 
       {/* Posts Grid */}
       <section className="container mx-auto px-5 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
           {posts.map((post, index) => (
-            <article
+            <motion.article
               key={post._id}
               className={`group bg-white rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border border-gray-200`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              // Framer Motion for card fade-in/stagger animation
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
             >
               {/* IMAGE */}
               <div className="relative h-56 bg-gray-100 overflow-hidden border-b border-gray-200">
@@ -144,7 +292,7 @@ export default function AllPosts() {
                   src={
                     post.imageUrl
                       ? `${BASE_URL}${post.imageUrl}`
-                      : "/placeholder-classic.jpg" // Using a classic placeholder
+                      : "/placeholder-classic.jpg"
                   }
                   alt={post.title}
                   fill
@@ -153,13 +301,7 @@ export default function AllPosts() {
                 />
 
                 {/* Optional floating tag for category, moved to bottom-left */}
-                <span
-                  className="absolute bottom-3 left-4 px-3 py-1 text-xs tracking-wider font-semibold rounded-sm shadow-md"
-                  style={{
-                    backgroundColor: VINTAGE_ACCENT,
-                    color: WARM_CREAM,
-                  }}
-                >
+                <span className=" bg-[#0a3d3a] text-white/90 absolute bottom-3 left-4 px-3 py-1 text-xs tracking-wider font-semibold rounded-sm shadow-md">
                   {post.category || "Reflections"}
                 </span>
               </div>
@@ -172,7 +314,6 @@ export default function AllPosts() {
                     <Calendar size={14} className="text-gray-400" />
                     {formatDate(post.createdAt)}
                   </span>
-                  {/* Assuming post.author exists, if not, remove or use a default */}
                   <span className="flex items-center gap-1">
                     <User size={14} className="text-gray-400" />
                     {post.author || "The Editor"}
@@ -193,9 +334,9 @@ export default function AllPosts() {
                 </p>
 
                 {/* READ MORE (Classic button style) */}
-                <button
+                <a
+                  href={`/posts/${post.slug}`}
                   className={`mt-6 inline-flex items-center text-sm font-semibold tracking-wider uppercase transition`}
-                 
                 >
                   <span className="text-[#119188] border-b cursor-pointer border-dashed border-current pb-0.5">
                     Continue Reading
@@ -204,9 +345,9 @@ export default function AllPosts() {
                     size={16}
                     className="text-[#119188] ml-2 transform group-hover:translate-x-1 transition duration-300"
                   />
-                </button>
+                </a>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </section>
