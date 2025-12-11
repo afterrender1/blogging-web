@@ -81,17 +81,7 @@ export default function AllPosts() {
     <>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Header */}
-        <header className="relative overflow-hidden bg-linear-to-br from-blue-600 via-purple-600 to-pink-600 py-24 md:py-32">
-          <div className="absolute inset-0 bg-black opacity-30"></div>
-          <div className="relative container mx-auto px-6 text-center text-white">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-              The Blog
-            </h1>
-            <p className="mt-4 text-xl md:text-2xl font-light opacity-90">
-              Fresh ideas. Bold perspectives. Daily.
-            </p>
-          </div>
-        </header>
+   
 
         {/* Posts Grid */}
         <section className="container mx-auto px-6 py-16 md:py-20 -mt-10 relative z-10">
