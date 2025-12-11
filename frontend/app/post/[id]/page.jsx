@@ -269,7 +269,7 @@ export default function PostPage() {
 
                                 <button
                                     className="flex items-center gap-3 px-6 py-3  border-2 uppercase text-sm font-semibold tracking-wider transition hover:bg-black hover:text-white"
-                                    style={{ borderColor: DEEP_CHARCOAL}}
+                                    style={{ borderColor: DEEP_CHARCOAL }}
                                     onClick={() => {
                                         navigator.share
                                             ? navigator.share({ title: post.title, url: window.location.href })
@@ -296,7 +296,7 @@ export default function PostPage() {
                     </Link>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }
