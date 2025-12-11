@@ -3,6 +3,7 @@ import AllPosts from "./AllPosts";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
 import Footer from "./Footer";
+import ScrollToTop from "./ScrollToTop";
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
       <Hero/>
       <AllPosts />
       <Footer/>
+      <ScrollToTop/>
     </div>
   );
 };
