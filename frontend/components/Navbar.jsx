@@ -6,9 +6,9 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
-  { name: "All Blogs", href: "/all-blogs" },
-  { name: "About Us", href: "/about-us" },
-  { name: "Categories", href: "/categories" },
+  { name: "All Blogs", href: "/all-blog-posts" },
+  { name: "About Us", href: "/about" },
+  { name: "Categories", href: "#" },
 ];
 
 export default function Navbar() {
