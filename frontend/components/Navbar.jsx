@@ -49,7 +49,7 @@ export default function Navbar() {
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              href="/"
+              href="/signin"
               className="text-gray-600 font-medium text-sm px-4 py-2 rounded-lg hover:text-[#124734] transition"
             >
               Sign In
