@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/single-post/:id", getPostById);
 router.post("/", upload.single("image"), createPost);
-router.get("/all-posts" , showPosts )
+router.get("/all-posts", showPosts)
 
 export default router;
