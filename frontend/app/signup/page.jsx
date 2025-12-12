@@ -1,11 +1,12 @@
 import Footer from '@/components/Footer'
-import SignInComponent from '@/components/SigninComponent'
+import SignupComponent from '@/components/SignupComponent'
 import React from 'react'
 
 const page = () => {
   return (
+    
     <>
-    <SignInComponent/>
+    <SignupComponent/>
     <Footer/>
     </>
   )

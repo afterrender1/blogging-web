@@ -1,12 +1,15 @@
 import Footer from '@/components/Footer'
-import SignInComponent from '@/components/SigninComponent'
+import Navbar from '@/components/Navbar'
+import Profile from '@/components/Profile'
 import React from 'react'
 
 const page = () => {
   return (
     <>
-    <SignInComponent/>
+    <Navbar/>
+    <Profile/>
     <Footer/>
+    
     </>
   )
 }

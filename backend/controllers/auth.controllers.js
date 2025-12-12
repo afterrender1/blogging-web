@@ -1,6 +1,10 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import genToken from "../lib/token.js";
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
+
 
 export const signup = async (req, res) => {
     try {
@@ -23,14 +27,24 @@ export const signup = async (req, res) => {
 
         const token = await genToken(user._id);
 
-        res.cookie("token", token, {
-            secure: false,
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-        });
+      res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,           // local me FALSE
+    sameSite: "lax",         // FE ko cookie mil jayegi
+    path: "/"
+});
 
-        res.status(201).json(user);
+        res.status(201).json({
+            message: "signup successfull",
+            token: token,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Signup error" });
@@ -93,6 +107,36 @@ export const signout = async (req, res) => {
 
     }
 
+
+}
+
+
+
+export const me = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({
+            success: false,
+            message: "user not logged in!"
+        })
+
+        const decoded = jwt.verify(token, process.env.JWT_SCERET)
+
+        const user = await User.findById(decoded.userId).select("-password")
+        res.status(200).json({
+            success: true,
+            user
+        })
+
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "server error"
+        })
+    }
 
 }
 

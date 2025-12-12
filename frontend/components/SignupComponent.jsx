@@ -4,22 +4,23 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 
-// Theme colors from the vintage palette (reused from SignupComponent)
+// Theme colors from the vintage palette
 const WARM_CREAM = "#fcf9f3";
 const DEEP_CHARCOAL = "#2d2a2a";
 const ACCENT_TEAL = "#119188";
 const BASE_URI = "http://localhost:8000"; // Assuming this is your API base
 
-const SignInComponent = () => {
+const SignupComponent = () => {
     const router = useRouter();
 
-    // State to manage form input for sign-in (email and password only)
+    // State to manage form input
     const [formData, setFormData] = useState({
+        name: '',
         email: '',
         password: ''
     });
 
-    // State for UI feedback
+    // ADDED: State for UI feedback
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -42,48 +43,46 @@ const SignInComponent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Destructure variables for API payload
-        const { email, password } = formData;
+        // Destructure variables for cleaner API payload
+        const { name, email, password } = formData;
 
-        const signin = async () => {
+        const signup = async () => {
             setIsLoading(true);
             setError(null);
 
             try {
-                // NOTE: Changed endpoint to /api/auth/signin
-                const sendData = await fetch(`${BASE_URI}/api/auth/signin`, {
+                const sendData = await fetch(`${BASE_URI}/api/auth/signup`, {
                     method: "POST",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        username: name, 
                         email: email,
                         password: password,
                     }),
                 });
 
                 const res = await sendData.json();
-
+                const token = res.token;
                 if (!sendData.ok) {
-                    // Handle API-specific errors (e.g., bad credentials)
-                    const errorMessage = res.message || 'Login failed. Check your email and password.';
+                    const errorMessage = res.message || 'Signup failed. Please try again.';
                     throw new Error(errorMessage);
                 }
 
-                // SUCCESS: Log and redirect the user
-                console.log("Sign In Successful:", res);
-                // Example: Redirect to a protected dashboard upon successful login
-router.push('/');
+                console.log("Signup Successful:", res);
+              
+
             } catch (err) {
-                console.error("Sign In Error:", err);
-                setError(err.message); // Set the error message for display
+                console.error("Signup Error:", err);
+                setError(err.message); 
             } finally {
                 setIsLoading(false);
             }
         };
 
-        signin();
+        signup();
     };
 
 
@@ -95,7 +94,7 @@ router.push('/');
                     onClick={handleBack}
                     className="inline-flex items-center cursor-pointer gap-1 text-sm uppercase font-medium transition hover:opacity-80"
                     style={{ color: DEEP_CHARCOAL }}
-                    disabled={isLoading}
+                    disabled={isLoading} // Disable back button while submitting
                 >
                     <ChevronLeft size={18} />
                     <span className="mt-0.5">Back</span>
@@ -104,15 +103,34 @@ router.push('/');
 
             {/* Main Sign In Form Container */}
             <div className="min-h-screen flex items-start sm:items-center justify-center pt-8 sm:pt-0 px-4" style={{ backgroundColor: WARM_CREAM }}>
+                {/* max-w-md ensures responsiveness and centering on large screens */}
                 <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8 border-t-4" style={{ borderColor: ACCENT_TEAL }}>
 
                     {/* Heading */}
                     <h2 className="text-3xl font-serif font-light text-center mb-8" style={{ color: DEEP_CHARCOAL }}>
-                        Sign In
+                        Create Account
                     </h2>
 
                     {/* Form: Submits data via handleSubmit */}
                     <form className="space-y-6" onSubmit={handleSubmit}>
+
+                        {/* Name */}
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: DEEP_CHARCOAL }}>
+                                Name
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="Enter your name"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-[#119188] transition bg-white"
+                                required
+                                disabled={isLoading}
+                            />
+                        </div>
 
                         {/* Email */}
                         <div>
@@ -150,7 +168,7 @@ router.push('/');
                             />
                         </div>
 
-                        {/* Error Message Display */}
+                        {/* Error Message Display (ADDED) */}
                         {error && (
                             <p className="text-center text-sm font-medium p-3 rounded-lg border border-red-300" style={{ color: DEEP_CHARCOAL, backgroundColor: '#fdebeb' }}>
                                 {error}
@@ -160,28 +178,29 @@ router.push('/');
                         {/* Button */}
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isLoading} // Disable button when loading
                             className={`w-full py-3 rounded-lg text-white font-semibold tracking-wide uppercase transition 
                                 ${isLoading ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
                             style={{ backgroundColor: ACCENT_TEAL }}
                         >
                             {/* Display loading state feedback */}
-                            {isLoading ? 'Verifying...' : 'Sign In'}
+                            {isLoading ? 'Processing...' : 'Sign UP'}
                         </button>
                     </form>
-                    <div>
+<div>
     already have an account?{' '}
     <span
         className="text-[#119188] font-medium cursor-pointer hover:underline"
-        onClick={() => router.push('/signup')}
+        onClick={() => router.push('/signin')}
     >
-        Sign Up
+        Sign In
     </span>
-                    </div>
+</div>
+
                 </div>
             </div>
         </>
     );
 };
 
-export default SignInComponent;
+export default SignupComponent;

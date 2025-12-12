@@ -30,3 +30,4 @@ app.listen(port, () => {
     console.log("🚀 ~ server stared at port :", port)
     dbConnect()
 })
+
