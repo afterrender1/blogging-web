@@ -54,3 +54,40 @@ export const getPostById = async (req, res) => {
 
 }
 
+
+export const likePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId)
+      return res.status(400).json({ message: "User id required" });
+
+    const post = await Post.findById(postId);
+    if (!post)
+      return res.status(404).json({ message: "Post not found" });
+
+    const isLiked = post.likedBy.includes(userId);
+
+    if (isLiked) {
+      // 👎 DISLIKE (remove like)
+      post.likedBy = post.likedBy.filter(
+        id => id.toString() !== userId
+      );
+    } else {
+      // 👍 LIKE
+      post.likedBy.push(userId);
+    }
+
+    await post.save();
+
+    res.status(200).json({
+      message: isLiked ? "Post disliked" : "Post liked",
+      totalLikes: post.likedBy.length,
+      liked: !isLiked
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

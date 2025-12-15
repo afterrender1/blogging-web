@@ -6,6 +6,8 @@ title : {type : String , required : true},
 intro : {type : String , required : true},
 content : {type : String , required : true}, 
 imageUrl : {type: String ,  required : true},
+likes : {type : Number , default : 0},
+likedBy : [{type : mongoose.Schema.Types.ObjectId , ref : "User"}],
 createdAt : {type : Date , default : Date.now}
 
 })

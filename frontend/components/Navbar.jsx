@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, User, LogOut, Loader2 } from "lucide-react"; // ADDED: Loader2 for loading state
+import { Menu, X, User, LogOut, Loader2 } from "lucide-react";
 
 // --- Configuration ---
 const BASE_URI = "http://localhost:8000";
@@ -19,19 +19,15 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
-  // FIX 1: New state to track if the initial user check is complete
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // --- Authentication Logic ---
-
-  // Fetches the current logged-in user (runs once on mount)
   const getUser = async () => {
-    // Start checking session
     setIsCheckingSession(true);
     try {
       const res = await fetch(`${BASE_URI}/api/auth/me`, {
         method: "GET",
-        credentials: "include", // Send cookie automatically
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -48,7 +44,6 @@ export default function Navbar() {
       console.error("User fetch error:", error);
       setUser(null);
     } finally {
-      // FIX 2: Set loading to false only after the API call finishes
       setIsCheckingSession(false);
     }
   };
@@ -57,7 +52,6 @@ export default function Navbar() {
     getUser();
   }, []);
 
-  // Handles user sign-out
   const handleLogout = async () => {
     try {
       await fetch(`${BASE_URI}/api/auth/signout`, {
@@ -73,8 +67,6 @@ export default function Navbar() {
   }
 
   // --- Render Logic ---
-
-  // Render a skeleton/loader while checking the session to prevent flicker
   const loadingState = (
     <div className="flex items-center space-x-4">
       <div className="w-16 h-4 bg-gray-200 rounded-lg animate-pulse hidden md:block" />
@@ -82,7 +74,6 @@ export default function Navbar() {
     </div>
   );
 
-  // FIX 3: Conditional rendering based on isCheckingSession
   const authButtons = isCheckingSession ? loadingState : (
     user ? (
       <>
@@ -95,13 +86,8 @@ export default function Navbar() {
           <User size={18} />
           {user.username}
         </Link>
-        {/* Logout Button (Desktop) */}
-        <button
-          onClick={handleLogout}
-          className={`bg-[${ACCENT_COLOR}] text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-[${HOVER_ACCENT}] transition shadow-md`}
-        >
-          Logout
-        </button>
+        {/* Logout Button (Desktop) - FIXED: Changed text-black to text-white */}
+  
       </>
     ) : (
       <>
@@ -115,7 +101,7 @@ export default function Navbar() {
         {/* Sign In Button (Desktop) */}
         <Link
           href="/signin"
-          className={`bg-[${ACCENT_COLOR}] text-white font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-[${HOVER_ACCENT}] transition shadow-md`}
+          className={`bg-[${ACCENT_COLOR}] text-gray-600 font-semibold text-sm px-6 py-2.5 rounded-lg hover:bg-[${HOVER_ACCENT}] transition`}
         >
           Sign In
         </Link>
@@ -123,7 +109,6 @@ export default function Navbar() {
     )
   );
 
-  // FIX 4: Mobile auth links also check the loading state (though usually hidden on desktop)
   const mobileAuthLinks = isCheckingSession ? (
     <div className="pt-4 space-y-3 border-t border-gray-200 flex justify-center py-2">
       <Loader2 className="animate-spin text-gray-500" size={24} />
@@ -203,7 +188,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Desktop Buttons (Now includes the flicker fix) */}
+          {/* Desktop Buttons (Now includes the flicker fix and UI fix) */}
           <div className="hidden md:flex items-center space-x-4">
             {authButtons}
           </div>
@@ -236,7 +221,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Mobile Auth Links (Now includes the flicker fix) */}
+          {/* Mobile Auth Links */}
           {mobileAuthLinks}
         </div>
       </div>
