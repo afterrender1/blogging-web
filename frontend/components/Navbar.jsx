@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, User, LogOut, Loader2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { checkUser } from "@/redux/features/auth/authSlice";
 
 // --- Configuration ---
 const BASE_URI = "http://localhost:8000";
@@ -34,8 +36,10 @@ export default function Navbar() {
         const data = await res.json();
         if (data.user) {
           setUser(data.user);
+          // dispatch(checkUser(data.user));
         } else {
           setUser(null);
+          // dispatch(checkUser(null));
         }
       } else {
         setUser(null);
@@ -66,6 +70,8 @@ export default function Navbar() {
     }
   }
 
+    
+
   // --- Render Logic ---
   const loadingState = (
     <div className="flex items-center space-x-4">
@@ -87,7 +93,7 @@ export default function Navbar() {
           {user.username}
         </Link>
         {/* Logout Button (Desktop) - FIXED: Changed text-black to text-white */}
-  
+
       </>
     ) : (
       <>
@@ -173,6 +179,7 @@ export default function Navbar() {
               />
             </Link>
           </div>
+ 
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-10">

@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Loader2 } from "lucide-react"; // Added Loader2 icon
+import { useDispatch } from "react-redux";
+import { checkUser } from "@/redux/features/auth/authSlice";
 
 // Theme colors from the vintage palette
 const WARM_CREAM = "#fcf9f3";
@@ -12,6 +14,7 @@ const BASE_URI = "http://localhost:8000"; // Assuming this is your API base
 
 const SignInComponent = () => {
     const router = useRouter();
+    const dispatch = useDispatch();
 
     // State to manage form input for sign-in (email and password only)
     const [formData, setFormData] = useState({
@@ -69,6 +72,8 @@ const SignInComponent = () => {
                 }
 
                 console.log("Sign In Successful:", res);
+                dispatch(checkUser(res));
+
                 // Redirect to the home page or dashboard upon successful login
                 router.push('/');
             } catch (err) {

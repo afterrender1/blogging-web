@@ -16,8 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
-
-const BASE_URL = "http://localhost:8000";
+import { useSelector } from "react-redux";
 
 // Vintage Classic Palette
 const WARM_CREAM = "#fcf9f3";
@@ -45,8 +44,17 @@ export default function PostPage() {
     const [readingProgress, setReadingProgress] = useState(0);
     const [comment, setComment] = useState("");
     const [user, setUser] = useState(null);
-    const [isCheckingSession, setIsCheckingSession] = useState(true);
     const BASE_URL = "http://localhost:8000";
+
+
+  const userState = useSelector((state) => state.auth.user);
+useEffect(() => {
+    if (userState) {
+        console.log("User state in PostPage:", userState._id);
+        setUser(userState); // optional, only if you need separate local state
+
+    }
+}, [userState]);
 
     // NOTE: fetchPost and useEffect logic remains unchanged as requested.
     useEffect(() => {
@@ -59,6 +67,9 @@ export default function PostPage() {
 
                 const data = await res.json();
                 setPost(data.post);
+                console.log(data.post);
+
+                
             } catch (err) {
                 setError("This article seems to have wandered off...");
             } finally {
@@ -77,36 +88,13 @@ export default function PostPage() {
 
 
     };
-    const getUser = async () => {
-        setIsCheckingSession(true);
-        try {
-            const res = await fetch(`${BASE_URL}/api/auth/me`, {
-                method: "GET",
-                credentials: "include",
-            });
+  const scrollToId = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" }); // smooth scroll
+  }
+};
 
-            if (res.ok) {
-                const data = await res.json();
-                if (data.user) {
-                    setUser(data.user._id);
-
-                } else {
-                    setUser(null);
-                }
-            } else {
-                setUser(null);
-            }
-        } catch (error) {
-            console.error("User fetch error:", error);
-            setUser(null);
-        } finally {
-            setIsCheckingSession(false);
-        }
-    };
-
-    useEffect(() => {
-        getUser();
-    }, []);
 
     const commentSubmitHandler = async () => {
         try {
@@ -115,7 +103,7 @@ export default function PostPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ comment, userId: user }),
+                body: JSON.stringify({ comment, userId: user._id  , username: user.username  }),
             });
             if (!res.ok) throw new Error("Failed to submit comment");
 
@@ -127,7 +115,6 @@ export default function PostPage() {
             alert(err.message);
         }
     };
-
 
 
     // Reading progress bar logic remains the same
@@ -286,6 +273,9 @@ export default function PostPage() {
                                 <Clock size={16} style={{ color: VINTAGE_ACCENT }} />
                                 <span>{post.readTime || "8 min read"}</span>
                             </div>
+                            <div className="flex items-center gap-2" onClick={()=> scrollToId("comments")} >
+                                <span>See Comments</span>
+                            </div>
                         </div>
 
                         {/* Featured Image (Enhanced with Framer Motion hover) */}
@@ -401,7 +391,7 @@ const TEXT_MUTED = "#666";
 
 
                     {/* 2. All Comments List (Styled as Journal Entries) */}
-                    <div className="pt-4">
+                    <div className="pt-4" id="comments">
                         {/* Title for the Comment Section */}
                         <div className="flex items-center gap-3 mb-8 border-b pb-4" style={{ borderColor: VINTAGE_ACCENT + '50' }}>
                             {/* Using MessageSquare icon from lucide-react */}
@@ -416,7 +406,7 @@ const TEXT_MUTED = "#666";
 
                         {/* Conditional Rendering of Comments */}
                         {post.comments && post.comments.length > 0 ? (
-                            <div className="flex flex-col gap-6">
+                            <div className="flex flex-col-reverse gap-6">
                                 {post.comments.map((cmt) => (
                                     <div
                                         key={cmt._id}
@@ -433,7 +423,10 @@ const TEXT_MUTED = "#666";
                                             {/* User/Author Placeholder (Using Feather Icon) */}
                                             <span className="flex items-center gap-1 font-semibold" style={{ color: VINTAGE_ACCENT }}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={VINTAGE_ACCENT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-feather"><path d="M20.24 12.24l-8.48-8.49L1.97 12.24l8.48 8.49z" /><path d="M12.24 20.24l-8.49-8.48L12.24 1.97l8.49 8.48z" /></svg>
-                                                {cmt.user || "Anonymous Reader"}
+                                                {cmt.username || 'Anonymous'}
+                                                {/* {cmt._id || 'Anonymous'} */}
+
+                                                {/* {userState.username || 'Anonymous'} */}
                                             </span>
 
                                             {/* Timestamp (Using Clock Icon) */}
@@ -449,6 +442,7 @@ const TEXT_MUTED = "#666";
                             // Styled Empty State
                             <div className="text-center p-12 rounded-lg border-2 border-dashed border-gray-300" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={TEXT_MUTED} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square mx-auto mb-4">
+
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                                 </svg>
                                 <p className="text-lg font-sans" style={{ color: TEXT_MUTED }}>
@@ -458,7 +452,6 @@ const TEXT_MUTED = "#666";
                         )}
                     </div>
                 </div>
-
                 {/* Final CTA */}
                 <div className="mt-24 text-center">
                     <Link

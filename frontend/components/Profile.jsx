@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Loader2, AlertTriangle, LogOut } from 'lucide-react'; // Added LogOut icon
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { deleteUser } from '../redux/features/auth/authSlice';
 
 // --- Configuration (Adjust as necessary) ---
 const BASE_URI = "http://localhost:8000";
@@ -19,6 +21,7 @@ const Profile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false); // NEW: Dedicated state for logout button
     const [error, setError] = useState(null);
+    const dispatch = useDispatch();
 
     // Function to fetch the logged-in user's details
     const getUser = async () => {
@@ -63,6 +66,8 @@ const Profile = () => {
 
             // On success, clear the user state and redirect to the login page
             setUser(null);
+            dispatch(deleteUser());
+
             router.push('/');
 
         } catch (error) {

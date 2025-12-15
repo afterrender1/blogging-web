@@ -1,5 +1,6 @@
 import Post from "../models/Post.js"
 import dbConnect from "../lib/db.js";
+import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
   try {
@@ -93,45 +94,35 @@ export const likePost = async (req, res) => {
 };
 
 export const commentPost = async (req, res) => {
-
   try {
     const { postId } = req.params;
-    const { comment, userId } = req.body;
+    const { comment, userId, username } = req.body;
 
-    if (!postId) return res.status(400).json({ success: false, message: "post not found!" })
-    if (!comment || !userId) return res.status(400).json({ success: false, message: "comment required or login first" })
+    if (!postId) return res.status(400).json({ success: false, message: "post not found!" });
+    if (!comment || !userId) return res.status(400).json({ success: false, message: "comment required or login first" });
 
-    const post = await Post.findById(postId)
-    if (!post) return res.status(404).json({
-      success: false,
-      message: "post not found"
-    })
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ success: false, message: "post not found" });
+
+    if (!username) return res.status(404).json({ success: false, message: "user not found" });
 
     const newComment = {
+      username,
       user: userId,
       comment: comment
-    }
+    };
 
-    post.comments.push(newComment)
-    await post.save()
+    post.comments.push(newComment);
+    await post.save();
 
     res.status(201).json({
       success: true,
       message: "comment created!",
       comment: post.comments
-    })
-
+    });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "server error"
-    })
+    console.error(error);
+    res.status(500).json({ success: false, message: "server error" });
   }
-
-
-
-
-
-
-}
+};
