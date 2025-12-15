@@ -91,3 +91,47 @@ export const likePost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const commentPost = async (req, res) => {
+
+  try {
+    const { postId } = req.params;
+    const { comment, userId } = req.body;
+
+    if (!postId) return res.status(400).json({ success: false, message: "post not found!" })
+    if (!comment || !userId) return res.status(400).json({ success: false, message: "comment required or login first" })
+
+    const post = await Post.findById(postId)
+    if (!post) return res.status(404).json({
+      success: false,
+      message: "post not found"
+    })
+
+    const newComment = {
+      user: userId,
+      comment: comment
+    }
+
+    post.comments.push(newComment)
+    await post.save()
+
+    res.status(201).json({
+      success: true,
+      message: "comment created!",
+      comment: post.comments
+    })
+
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "server error"
+    })
+  }
+
+
+
+
+
+
+}

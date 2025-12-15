@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -37,13 +37,16 @@ const formatDate = (dateString) => {
 
 export default function PostPage() {
     const params = useParams();
-    const router = useRouter();
     const { id } = params;
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [readingProgress, setReadingProgress] = useState(0);
+    const [comment, setComment] = useState("");
+    const [user, setUser] = useState(null);
+    const [isCheckingSession, setIsCheckingSession] = useState(true);
+    const BASE_URL = "http://localhost:8000";
 
     // NOTE: fetchPost and useEffect logic remains unchanged as requested.
     useEffect(() => {
@@ -65,6 +68,67 @@ export default function PostPage() {
 
         fetchPost();
     }, [id]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log("Comment submitted:", comment);
+        commentSubmitHandler()
+
+
+
+    };
+    const getUser = async () => {
+        setIsCheckingSession(true);
+        try {
+            const res = await fetch(`${BASE_URL}/api/auth/me`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.user) {
+                    setUser(data.user._id);
+
+                } else {
+                    setUser(null);
+                }
+            } else {
+                setUser(null);
+            }
+        } catch (error) {
+            console.error("User fetch error:", error);
+            setUser(null);
+        } finally {
+            setIsCheckingSession(false);
+        }
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    const commentSubmitHandler = async () => {
+        try {
+            const res = await fetch(`${BASE_URL}/api/posts/${id}/comment`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ comment, userId: user }),
+            });
+            if (!res.ok) throw new Error("Failed to submit comment");
+
+            alert("Comment submitted successfully!");
+            setComment("");
+        }
+        catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    };
+
+
 
     // Reading progress bar logic remains the same
     useEffect(() => {
@@ -283,6 +347,117 @@ export default function PostPage() {
                         </div>
                     </motion.div>
                 </article>
+
+                {/* Assume the following constants are defined:
+const WARM_CREAM = "#fcf9f3";
+const DEEP_CHARCOAL = "#2d2a2a";
+const VINTAGE_ACCENT = "#996a3f";
+const ACCENT_TEAL = "#119188";
+const TEXT_MUTED = "#666";
+// Assume post, comment, setComment, and handleSubmit are available in scope.
+// You must ensure handleSubmit is defined in the parent component and prevents default.
+*/}
+
+                <div className="max-w-5xl mx-auto px-6 md:px-12 mt-20 flex flex-col gap-10">
+
+                    {/* 1. Comment Submission Form (Styled for Vintage Look) */}
+                    <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                        <h2 className="text-3xl font-serif font-bold mb-6" style={{ color: DEEP_CHARCOAL }}>
+                            Share Your Reflection
+                        </h2>
+
+                        {/* NOTE: You must ensure 'handleSubmit' is defined and calls e.preventDefault() */}
+                        <form onSubmit={handleSubmit} className="flex flex-col">
+                            <textarea
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                className={`w-full p-4 border rounded-lg focus:ring-2 focus:ring-offset-2 transition resize-none 
+                           text-lg font-serif placeholder:font-sans placeholder:text-gray-400`}
+                                rows="4"
+                                placeholder="Write your insightful comment here..."
+                                style={{
+                                    color: DEEP_CHARCOAL,
+                                    borderColor: VINTAGE_ACCENT + '60',
+                                    outline: 'none',
+                                    '--tw-ring-color': ACCENT_TEAL, // Tailwind focus ring color
+                                    '--tw-ring-offset-color': WARM_CREAM, // Ring offset color
+                                }}
+                            />
+
+                            <button
+                                type="submit"
+                                className={`mt-6 px-8 py-3 uppercase text-sm font-semibold tracking-wider transition duration-300 shadow-md 
+                           hover:shadow-lg hover:opacity-90 active:scale-[0.99]`}
+                                style={{
+                                    backgroundColor: ACCENT_TEAL,
+                                    color: WARM_CREAM,
+                                    border: `2px solid ${ACCENT_TEAL}`,
+                                }}
+                            >
+                                Submit Reflection
+                            </button>
+                        </form>
+                    </div>
+
+
+                    {/* 2. All Comments List (Styled as Journal Entries) */}
+                    <div className="pt-4">
+                        {/* Title for the Comment Section */}
+                        <div className="flex items-center gap-3 mb-8 border-b pb-4" style={{ borderColor: VINTAGE_ACCENT + '50' }}>
+                            {/* Using MessageSquare icon from lucide-react */}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={VINTAGE_ACCENT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
+
+                            <span className="text-3xl font-serif font-bold" style={{ color: DEEP_CHARCOAL }}>
+                                {post.comments && post.comments.length > 0 ? `${post.comments.length} Reflections` : 'No Reflections Yet'}
+                            </span>
+                        </div>
+
+                        {/* Conditional Rendering of Comments */}
+                        {post.comments && post.comments.length > 0 ? (
+                            <div className="flex flex-col gap-6">
+                                {post.comments.map((cmt) => (
+                                    <div
+                                        key={cmt._id}
+                                        className="p-6 bg-white rounded-lg shadow-sm transition-shadow duration-300 hover:shadow-md"
+                                        style={{ borderLeft: `4px solid ${VINTAGE_ACCENT}80` }}
+                                    >
+                                        {/* Comment Content */}
+                                        <p className="text-gray-800 text-lg font-serif leading-relaxed" style={{ color: DEEP_CHARCOAL }}>
+                                            {cmt.comment}
+                                        </p>
+
+                                        {/* Comment Metadata */}
+                                        <div className="flex flex-wrap items-center gap-4 mt-3 text-sm font-sans border-t pt-3" style={{ borderColor: WARM_CREAM }}>
+                                            {/* User/Author Placeholder (Using Feather Icon) */}
+                                            <span className="flex items-center gap-1 font-semibold" style={{ color: VINTAGE_ACCENT }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={VINTAGE_ACCENT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-feather"><path d="M20.24 12.24l-8.48-8.49L1.97 12.24l8.48 8.49z" /><path d="M12.24 20.24l-8.49-8.48L12.24 1.97l8.49 8.48z" /></svg>
+                                                {cmt.user || "Anonymous Reader"}
+                                            </span>
+
+                                            {/* Timestamp (Using Clock Icon) */}
+                                            <span className="flex items-center gap-1 italic" style={{ color: TEXT_MUTED }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={TEXT_MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                                                {cmt.createdAt ? formatDate(cmt.createdAt) : 'Just Now'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            // Styled Empty State
+                            <div className="text-center p-12 rounded-lg border-2 border-dashed border-gray-300" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={TEXT_MUTED} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square mx-auto mb-4">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                                <p className="text-lg font-sans" style={{ color: TEXT_MUTED }}>
+                                    The archive section is empty. Be the first to add your reflection!
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {/* Final CTA */}
                 <div className="mt-24 text-center">

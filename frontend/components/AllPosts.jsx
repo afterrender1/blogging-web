@@ -11,8 +11,8 @@ import {
   Loader2,
   XCircle,
   CheckCircle,
-  ThumbsUp,
-  Heart // Using Heart for better visual feedback on like count
+  MessageSquareText,
+  Heart
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -232,20 +232,20 @@ export default function AllPosts() {
       const data = await likeApi.json();
 
       // OPTIONAL: Update the local posts state to reflect the new like count immediately
-    setPosts(prevPosts =>
-  prevPosts.map(post => {
-    if (post._id !== postId) return post;
+      setPosts(prevPosts =>
+        prevPosts.map(post => {
+          if (post._id !== postId) return post;
 
-    const alreadyLiked = post.likedBy.includes(user._id);
+          const alreadyLiked = post.likedBy.includes(user._id);
 
-    return {
-      ...post,
-      likedBy: alreadyLiked
-        ? post.likedBy.filter(id => id !== user._id) // DISLIKE
-        : [...post.likedBy, user._id],               // LIKE
-    };
-  })
-);
+          return {
+            ...post,
+            likedBy: alreadyLiked
+              ? post.likedBy.filter(id => id !== user._id) // DISLIKE
+              : [...post.likedBy, user._id],               // LIKE
+          };
+        })
+      );
 
 
     } catch (error) {
@@ -431,6 +431,13 @@ export default function AllPosts() {
                             className={`text-[${ACCENT_TEAL}] ml-2 transform group-hover:translate-x-1 transition duration-300`}
                           />
                         </button>
+                      </div>
+                      <div className="flex justify-center items-center gap-1 text-gray-500">
+                        <MessageSquareText size={18} />
+                        <span>
+                          {post.comments.length || 0}
+                       
+                        </span>
                       </div>
 
                       {/* LIKE COUNT/BUTTON */}
