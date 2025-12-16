@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { checkUser } from "@/redux/features/auth/authSlice";
 
 // --- Configuration ---
-const BASE_URI = "http://localhost:8000";
+const BASE_URI = "https://blogging-web-production.up.railway.app";
 const ACCENT_COLOR = "#124734"; // Centralized the primary color for consistency
 const HOVER_ACCENT = "#0e3a2a";
 

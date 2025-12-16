@@ -10,7 +10,7 @@ import { checkUser } from "@/redux/features/auth/authSlice";
 const WARM_CREAM = "#fcf9f3";
 const DEEP_CHARCOAL = "#2d2a2a";
 const ACCENT_TEAL = "#119188";
-const BASE_URI = "http://localhost:8000"; // Assuming this is your API base
+const BASE_URI = "https://blogging-web-production.up.railway.app"; // Assuming this is your API base
 
 const SignInComponent = () => {
     const router = useRouter();

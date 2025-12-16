@@ -10,12 +10,20 @@ dotenv.config()
 
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+app.set("trust proxy", 1);
+
+app.use(cors({
+    origin: [
+        "https://your-fe-app.vercel.app"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+}));
 
 app.use(express.json());
 app.use(cookieParser())
 app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")));
-    
+
 app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRouter)
 

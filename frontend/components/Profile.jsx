@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { deleteUser } from '../redux/features/auth/authSlice';
 
 // --- Configuration (Adjust as necessary) ---
-const BASE_URI = "http://localhost:8000";
+const BASE_URI = "https://blogging-web-production.up.railway.app";
 const DEEP_CHARCOAL = "#2d2a2a";
 const ACCENT_TEAL = "#119188";
 const WARM_CREAM = "#fcf9f3";

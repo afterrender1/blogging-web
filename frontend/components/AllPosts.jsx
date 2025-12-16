@@ -17,7 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 
 // --- New Classic Palette ---
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://blogging-web-production.up.railway.app";
 const WARM_CREAM = "#fcf9f3";
 const DEEP_CHARCOAL = "#2d2a2a";
 const VINTAGE_ACCENT = "#996a3f";

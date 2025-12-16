@@ -28,7 +28,7 @@ const CreatePostHere = () => {
     formData.append("image", imageFile); // matches `upload.single("image")`
 
     try {
-      const res = await fetch("http://localhost:8000/api/posts", {
+      const res = await fetch("https://blogging-web-production.up.railway.app/api/posts", {
         method: "POST",
         body: formData,
       });

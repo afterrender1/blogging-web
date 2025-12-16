@@ -44,7 +44,7 @@ export default function PostPage() {
     const [readingProgress, setReadingProgress] = useState(0);
     const [comment, setComment] = useState("");
     const [user, setUser] = useState(null);
-    const BASE_URL = "http://localhost:8000";
+    const BASE_URL = "https://blogging-web-production.up.railway.app";
 
 
   const userState = useSelector((state) => state.auth.user);

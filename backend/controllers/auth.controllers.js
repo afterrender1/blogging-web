@@ -27,13 +27,13 @@ export const signup = async (req, res) => {
 
         const token = await genToken(user._id);
 
-      res.cookie("token", token, {
-    httpOnly: true,
-    secure: false,           // local me FALSE
-    sameSite: "lax",         // FE ko cookie mil jayegi
-    path: "/"
-});
-
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        });
         res.status(201).json({
             message: "signup successfull",
             token: token,
@@ -68,11 +68,12 @@ export const signin = async (req, res) => {
 
         const token = genToken(user._id)
         res.cookie("token", token, {
-            secure: false,
-            sameSite: "strict",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true
-        })
+            path: "/"
+        });
         res.status(200).json(user)
 
 

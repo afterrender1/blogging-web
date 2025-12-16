@@ -19,7 +19,7 @@ function FetchUser({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/auth/me", {
+        const res = await fetch("https://blogging-web-production.up.railway.app/api/auth/me", {
           credentials: "include",
         });
         if (res.ok) {
