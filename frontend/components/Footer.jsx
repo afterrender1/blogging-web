@@ -84,7 +84,7 @@ export default function Footer() {
             </div>
 
             <div className="border-t border-gray-700 py-4 text-center text-gray-400 text-sm">
-                &copy; {new Date().getFullYear()} Daily World. All rights reserved.
+                &copy; {new Date().getFullYear()} AFTERRENDER. All rights reserved.
             </div>
         </footer>
     );
