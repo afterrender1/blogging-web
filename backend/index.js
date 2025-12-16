@@ -14,7 +14,9 @@ app.set("trust proxy", 1);
 
 app.use(cors({
     origin: [
-        "https://your-fe-app.vercel.app"
+        "https://dailyworldxar.vercel.app",
+        "https://blogging-web-production.up.railway.app",
+        "http://localhost:3000"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
